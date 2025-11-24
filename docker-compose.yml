@@ -1,0 +1,19 @@
+version: "3.8"
+services:
+  app:
+    build: .
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+    restart: unless-stopped
+
+  ingest:
+    image: python:3.10-slim
+    working_dir: /ingest
+    volumes:
+      - ./:/ingest
+    env_file:
+      - .env
+    command: bash -c "pip install --no-cache-dir pymupdf tiktoken supabase openai tqdm python-dotenv && python /ingest/ingest.py"
+    # run as one-off with: docker compose run --rm ingest
